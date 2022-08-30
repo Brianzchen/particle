@@ -12,6 +12,9 @@ Living in the root of your project to manage to manage configuration and custom 
 {
   "scripts": {
     "name": "command"
+  },
+  "options": {
+
   }
 }
 ```
