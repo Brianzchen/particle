@@ -4,6 +4,7 @@ use std::path::{Path, PathBuf};
 use serde_json::from_str;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use colored::Colorize;
 
 const CONFIG_FILE_NAME: &str = "particle.config.json";
 
@@ -49,10 +50,19 @@ fn get_config_contents() {
 }
 
 fn main() {
-    get_config_contents();
+    let _config = get_config_contents();
 
     let args: Vec<String> = env::args().collect();
     let query = &args[1];
 
-    println!("you called {query}")
+    if query == "install" {
+        println!("install deps I guess");
+    } else if query == "help" {
+        println!("give some helpful hints full of commands")
+    } else {
+        println!("{}, try `{}` for more information",
+            format!("Invalid command given").red().bold(),
+            format!("particle help").green()
+        )
+    }
 }
