@@ -1,5 +1,7 @@
 use std::env;
+use std::fs;
 use std::path::{Path, PathBuf};
+use serde_json::{from_str, Value};
 
 const CONFIG_FILE_NAME: &str = "particle.config.json";
 
@@ -20,17 +22,24 @@ fn find_config_file(starting_directory: &Path) -> Option<PathBuf> {
     }
 }
 
-fn get_config_contents() -> std::io::Result<()> {
-    let path = env::current_dir()?;
+fn get_config_contents() {
+    let path = env::current_dir()
+        .expect("Cannot read current dir");
+
 
     match find_config_file(&path) {
-        Some(filepath) => println!("config file was found: {:?}", filepath),
+        Some(filepath) => {
+            println!("config file was found: {:?}", filepath);
+            let content = fs::read_to_string(filepath)
+                .expect("Should have been able to read the file");
+            let config: Value = from_str(&content)
+                .expect("JSON was not well-formatted");
+            println!("{config}");
+        },
         None => println!("No config file was found."),
     };
-
-    Ok(())
 }
 
 fn main() {
-    get_config_contents().unwrap();
+    get_config_contents();
 }

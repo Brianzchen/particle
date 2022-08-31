@@ -3,6 +3,9 @@
 ## Setup
 
 1. Install [rust](https://www.rust-lang.org/learn/get-started)
+1. `cargo build` to setup dependencies and create debug build
+1. `./run-fixture.sh` to run the debug app against our fixture test project (You don't need to run `cargo build` if you are running this immediately, the script does this for you)
+1. `cargo doc --open` to view docs on current dependencies
 
 ## Getting up to date
 
