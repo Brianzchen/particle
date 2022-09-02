@@ -58,9 +58,7 @@ fn main() {
     println!("this is the root path {}", root_path);
 
     let args: Vec<String> = env::args().collect();
-    // This dies if I pass nothing as a param
-    // TODO figure how to check first
-    let query = &args[1];
+    let query = if args.len() > 1 { &args[1] } else { "" };
 
     if query == "install" {
         println!("install deps I guess");
