@@ -37,21 +37,29 @@ fn get_config() -> Result<(ParticleConfig, String), String> {
 
     match find_parent_file(&path, CONFIG_FILE_NAME) {
         Some(filepath) => {
+            let root_path = filepath.display().to_string();
+            let config_file_index = root_path.find(CONFIG_FILE_NAME).unwrap();
+            let root_path = &root_path[..config_file_index];
+
             let content = fs::read_to_string(filepath)
                 .expect("Should have been able to read the file");
             let config: ParticleConfig = from_str(&content)
                 .expect("JSON was not well-formatted");
-            Ok((config, "".to_string()))
+
+            Ok((config, root_path.to_string()))
         },
         None => Err("".to_string()),
     }
 }
 
 fn main() {
-    let (config, _root_path) = get_config().expect("No config file was found.");
+    let (config, root_path) = get_config().expect("No config file was found.");
     println!("Workspaces are {:?}", config.workspaces);
+    println!("this is the root path {}", root_path);
 
     let args: Vec<String> = env::args().collect();
+    // This dies if I pass nothing as a param
+    // TODO figure how to check first
     let query = &args[1];
 
     if query == "install" {
