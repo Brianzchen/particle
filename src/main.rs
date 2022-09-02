@@ -31,6 +31,11 @@ struct ParticleConfig {
     scripts: Option<HashMap<String, String>>,
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+struct ParticleDependencyLock {
+
+}
+
 fn get_config() -> Result<(ParticleConfig, String), String> {
     let path = env::current_dir()
         .expect("Cannot read current dir");
@@ -52,26 +57,42 @@ fn get_config() -> Result<(ParticleConfig, String), String> {
     }
 }
 
+fn install(config: ParticleConfig, root_path: String) {
+    println!("install deps I guess");
+    println!("Workspaces are {:?}", config.workspaces);
+    let mut lock_file = root_path.clone();
+    lock_file.push_str("/particle.lock.json");
+    let lock_file = fs::read_to_string(lock_file);
+    let lock_file = match lock_file {
+        Ok(content) => {
+            let config: ParticleDependencyLock = from_str(&content)
+                .expect("lock file is malformed");
+            config
+        },
+        Err(_) => {
+            println!("No lock file found");
+            ParticleDependencyLock {}
+        }
+    };
+    println!("the lock contents are {:?}", lock_file);
+    // look at the dependencies/peerDependencies of each
+    // create a list of what needs to be installed
+    // compare with lock file
+    // update lock file
+    // and query .npmrc file to figure out where to look for packages
+    // then install the remaining uninstall packages
+    // cleanup remaining packages
+    // only write new lockfile now after successful install
+}
+
 fn main() {
     let (config, root_path) = get_config().expect("No config file was found.");
-    println!("Workspaces are {:?}", config.workspaces);
-    println!("this is the root path {}", root_path);
 
     let args: Vec<String> = env::args().collect();
     let query = if args.len() > 1 { &args[1] } else { "" };
 
     if query == "install" {
-        println!("install deps I guess");
-        // Get a list of workspaces,
-        // pull particle.lock.json
-        // look at the dependencies/peerDependencies of each
-        // create a list of what needs to be installed
-        // compare with lock file
-        // update lock file
-        // and query .npmrc file to figure out where to look for packages
-        // then install the remaining uninstall packages
-        // cleanup remaining packages
-        // only write new lockfile now after successful install
+        install(config, root_path);
     } else if query == "help" {
         println!("give some helpful hints full of commands")
     } else {
