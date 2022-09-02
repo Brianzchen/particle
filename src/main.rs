@@ -57,9 +57,12 @@ fn get_config() -> Result<(ParticleConfig, String), String> {
     }
 }
 
-fn install(config: ParticleConfig, root_path: String) {
+fn install(config: &ParticleConfig, root_path: &String) {
     println!("install deps I guess");
+    // Pull workspace data
     println!("Workspaces are {:?}", config.workspaces);
+
+    // Pull lock file data
     let mut lock_file = root_path.clone();
     lock_file.push_str("/particle.lock.json");
     let lock_file = fs::read_to_string(lock_file);
@@ -81,18 +84,21 @@ fn install(config: ParticleConfig, root_path: String) {
     // update lock file
     // and query .npmrc file to figure out where to look for packages
     // then install the remaining uninstall packages
+    // what if we lazily installed dependencies
+    // Then particle would also need to be a runtime but we want to be un opinionated
     // cleanup remaining packages
     // only write new lockfile now after successful install
 }
 
 fn main() {
-    let (config, root_path) = get_config().expect("No config file was found.");
+    let (config, root_path) = get_config()
+        .expect("`particle.config.json` not found. You should add one to the root of your project to get started");
 
     let args: Vec<String> = env::args().collect();
     let query = if args.len() > 1 { &args[1] } else { "" };
 
     if query == "install" {
-        install(config, root_path);
+        install(&config, &root_path);
     } else if query == "help" {
         println!("give some helpful hints full of commands")
     } else {
