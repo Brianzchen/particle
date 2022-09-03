@@ -107,21 +107,24 @@ fn main() {
         .expect("`particle.config.json` not found. You should add one to the root of your project to get started");
 
     let args = Args::parse();
-    // let query = if args.len() > 1 { &args[1] } else { "" };
-    let command = &args.command;
+    let command = &args.command[..];
 
-    if command == "check" {
-        check(&config, &root_path);
-    } else if command == "workspace" {
-        println!("pull the package name");
-        if args.arg_2 == None {
-            println!("You've called `workspace` without the --package option");
+    match command {
+        "check" => {
+            check(&config, &root_path);
+        },
+        "workspace" => {
+            println!("pull the package name");
+            if args.arg_2 == None {
+                println!("You've called `workspace` without the --package option");
+            }
+            println!("{:?}", args.arg_2);
         }
-        println!("{:?}", args.arg_2);
-    } else {
-        println!("{}, try `{}` for more information",
-            format!("Invalid command given").red().bold(),
-            format!("particle help").green()
-        )
+        _ => {
+            println!("{}, try `{}` for more information",
+                format!("Invalid command given").red().bold(),
+                format!("particle help").green()
+            );
+        }
     }
 }
