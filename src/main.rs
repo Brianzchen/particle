@@ -58,10 +58,8 @@ fn get_config() -> Result<(ParticleConfig, String), String> {
     }
 }
 
-fn check(config: &ParticleConfig, root_path: &String) {
+fn check(_config: &ParticleConfig, root_path: &String) {
     println!("install deps I guess");
-    // Pull workspace data
-    println!("Workspaces are {:?}", config.workspaces);
 
     // Pull lock file data
     let mut lock_file = root_path.clone();
@@ -91,6 +89,10 @@ fn check(config: &ParticleConfig, root_path: &String) {
     // only write new lockfile now after successful install
 }
 
+fn get_workspaces_data(_config: &ParticleConfig) {
+    // TODO
+}
+
 /// An unopinionated monorepo package manager for JS based applications.
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
@@ -109,6 +111,10 @@ fn main() {
     let args = Args::parse();
     let command = &args.command[..];
 
+    // parse workspaces here
+    // to create a collection of workspaces and their package details
+    get_workspaces_data(&config);
+
     match command {
         "check" => {
             check(&config, &root_path);
@@ -117,8 +123,11 @@ fn main() {
             println!("pull the package name");
             if args.arg_2 == None {
                 println!("You've called `workspace` without the --package option");
+                println!("Try again");
+                return;
             }
             println!("{:?}", args.arg_2);
+            // Go check if the package name actually exists
         }
         _ => {
             println!("{}, try `{}` for more information",

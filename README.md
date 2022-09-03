@@ -6,9 +6,9 @@ An unopinionated monorepo package manager for JS based applications.
 
 ### particle.config.json
 
-Living in the root of your project to manage to manage configuration and custom scripts for particle.
+Living in the root of your project to manage configuration and custom scripts for particle.
 
-Unlike other monorepo solutions, particle does not take advantage of a root `package.json` and instead using a custom config solution.
+Unlike other monorepo solutions, particle does not take advantage of a root `package.json`, instead opting for a custom config.
 
 This allows a monorepo to not strictly run with JS based tooling.
 
@@ -16,17 +16,56 @@ This allows a monorepo to not strictly run with JS based tooling.
 
 ```json
 {
+  /**
+   * List of globs to find directories of packages to manage dependencies for
+   */
   "workspaces": Array<string>,
+  /**
+   * Map of custom scripts to conveniently run with particle using the `run` command
+   */
   "scripts": {
-    "name": "command"
+    [key: string]: string,
   },
+  /**
+   * Options to modify the default behaviour of particle in the project
+   *
+   * Can be to enable features or modify defaults
+   */
   "options": {
-    "checkInstalls": boolean
+    /**
+     * Whether `check` command should install dependencies to the cache
+     * as well as all workspace packages
+     *
+     * Default: false
+     */
+    "checkInstalls": boolean,
+    /**
+     * Whether all/some dependencies should be the same across all packages
+     * in the project.
+     *
+     * Default: false
+     */
+    "syncDependencies": boolean | Array<string>,
   }
 }
 ```
 
 **note** Consider other config formats, TOML, YML, etc
+
+### Dependency cache
+
+Unlike most JS monorepo frameworks, particle does not install dependencies into a project's root `node_modules` directory. Instead, dependencies when installed go into cache dir on the user's machine first before being copied into the queried workspace.
+
+```
+registry -> local cache -> copied into queried workspace
+```
+
+Doing this yields a couple of key benefits:
+
+- If you don't work across the whole monorepo you'll see far fewer dependencies and much faster installs
+- Dependencies and their versions are distributions locked in time. With a global cache, you can install a dependency either as an experiment or in another project and have it install also instantly next time
+- Because all dependencies are installed within a workspace you won't experience issues with node or tools not being aware of a monorepo and not being able to resolve a package because of hoisted dependencies
+- By using a global cache, we won't incur penalties related to installing duplicate dependencies across the monorepo as long if they use the same version
 
 ## Usage
 
@@ -40,12 +79,20 @@ This is the first command that's run after setting up or cloning a particle proj
 
 #### Force install
 
-But if you believe your project has not reached a scale to take advantage of this lazy install you can the `checkInstalls` option to `true` in the config file.
+If you believe your project has not reached a scale to take advantage of this lazy install you can the `checkInstalls` option to `true` in the config file.
 
-Alternatively use the `--install` flag if you want to install all dependencies as a once off.
+Alternatively use the `--install` flag if you want to install all dependencies as a once off. Such as in CI
+
+### `run [script]`
+
+Run a script listed in the config file's `scripts` key, appending any additional parameters to the script.
 
 ### `workspace [@scope/package] install`
 
 ### `workspace [@scope/package] run [script]`
 
 ### `workspace [@scope/package] [path]`
+
+### `uncache [package]`
+
+Removes a package from a user's local particle cache or all packages if no package was specified.
