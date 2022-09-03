@@ -14,7 +14,7 @@ This allows a monorepo to not strictly run with JS based tooling.
 
 <!-- consider how tools like lint-staged would work if we take this approach -->
 
-```json
+```js
 {
   /**
    * List of globs to find directories of packages to manage dependencies for
