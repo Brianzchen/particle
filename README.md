@@ -81,7 +81,13 @@ This is the first command that's run after setting up or cloning a particle proj
 
 If you believe your project has not reached a scale to take advantage of this lazy install you can the `checkInstalls` option to `true` in the config file.
 
-Alternatively use the `--install` flag if you want to install all dependencies as a once off. Such as in CI
+Alternatively use the `--install` flag if you want to install all dependencies as a once off. Such as in CI.
+
+#### Rechecks
+
+When this runs on projects with an existing `particle.lock.json`, particle will go through workspaces and the lock file to determine whether they match. If not, unless `checkInstalls` as has been enabled, workspace's that have mismatching dependencies will have an `outdated` file added discretely in `node_modules` which particle will check for to trigger reinstalls when future commands are run.
+
+Dependencies mappings can change quite regularly, especially when checking out different branches or pulling the latest commit in a git project. For cases like this you may consider adding `check` as part of your post checkout hook.
 
 ### `run [script]`
 
