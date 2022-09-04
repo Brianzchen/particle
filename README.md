@@ -2,6 +2,22 @@
 
 An unopinionated monorepo package manager for JS based applications.
 
+## Getting started
+
+### Installing particle
+
+#### With MacOS
+
+```sh
+brew tap brianzchen/particle
+```
+
+### Setup project
+
+In the root of the project, create a `particle.config.json` and ensure the `workspaces` field is populated.
+
+Now you can start using particle starting with `particle check` to create a dependency lock file. You can read our usage guide to learn more about `check` and other possible commands.
+
 ## Design
 
 ### particle.config.json
@@ -9,10 +25,6 @@ An unopinionated monorepo package manager for JS based applications.
 Living in the root of your project to manage configuration and custom scripts for particle.
 
 Unlike other monorepo solutions, particle does not take advantage of a root `package.json`, instead opting for a custom config.
-
-This allows a monorepo to not strictly run with JS based tooling.
-
-<!-- consider how tools like lint-staged would work if we take this approach -->
 
 ```js
 {
@@ -50,7 +62,11 @@ This allows a monorepo to not strictly run with JS based tooling.
 }
 ```
 
-**note** Consider other config formats, TOML, YML, etc
+This allows a monorepo to not strictly run with JS based tooling and means you aren't expected to have a root `package.json` file.
+
+Normally, many tools expect to be installed and executed from the root of the project. But they also generally provide ways to be executed from a separate directory. For tools like this, we instead recommend you create one or many workspaces to run tools against the root or some other directory.
+
+Though unnatural at first, it actually enforces a natural separation of concerns between the project tooling and application itself, where otherwise, tooling dependencies would all live in the root package.json as a `"devDependency"`.
 
 ### Dependency cache
 
@@ -69,7 +85,7 @@ Doing this yields a couple of key benefits:
 
 ## Usage
 
-Particle commands can be executed anywhere inside a project with a `particle.config.json` file.
+Commands can be executed anywhere inside particle project using `particle ` followed by one of the following commands.
 
 ### `check`
 

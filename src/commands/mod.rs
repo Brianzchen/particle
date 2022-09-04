@@ -1,3 +1,3 @@
 mod check;
 
-pub use check::check;
+pub use check::main as check;

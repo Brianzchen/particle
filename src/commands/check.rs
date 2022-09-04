@@ -3,7 +3,7 @@ use serde_json::from_str;
 
 use crate::constants;
 
-pub fn check(_config: &constants::ParticleConfig, root_path: &String) {
+pub fn main(_config: &constants::ParticleConfig, root_path: &String) {
   println!("install deps I guess");
 
   // Pull lock file data
