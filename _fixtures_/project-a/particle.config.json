@@ -1,6 +1,6 @@
 {
   "workspaces": [
-    "packages"
+    "packages/*"
   ],
   "scripts": {
     "hello": "echo hello"

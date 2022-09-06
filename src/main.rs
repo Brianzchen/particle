@@ -25,9 +25,7 @@ fn main() {
     let command = &args.command[..];
     let arg_2 = &args.arg_2;
 
-    // parse workspaces here
-    // to create a collection of workspaces and their package details
-    get_workspaces_data(&config);
+    let workspaces = get_workspaces_data(&config, &root_path);
 
     match command {
         "check" => {
@@ -41,14 +39,19 @@ fn main() {
             }
         },
         "workspace" => {
-            println!("pull the package name");
-            if args.arg_2 == None {
-                println!("You've called `workspace` without the --package option");
-                println!("Try again");
-                return;
+            match args.arg_2 {
+                Some(user_workspace) => {
+                    for workspace in workspaces {
+                        if workspace.name == user_workspace {
+                            println!("we found your workspace");
+                        }
+                    }
+                },
+                None => {
+                    println!("You've called `workspace` without the --package option");
+                    println!("Try again");
+                },
             }
-            println!("{:?}", args.arg_2);
-            // Go check if the package name actually exists
         }
         _ => {
             println!("{}, try `{}` for more information",

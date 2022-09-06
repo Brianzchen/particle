@@ -13,3 +13,8 @@ pub struct ParticleConfig {
 pub struct ParticleDependencyLock {
 
 }
+
+#[derive(Deserialize, Debug)]
+pub struct PkgJson {
+  pub name: String,
+}

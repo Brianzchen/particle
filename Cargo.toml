@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 clap = { version = "3.2.20", features = ["derive"] }
 colored = "2.0.0"
+glob = "0.3.0"
 run_script = "^0.10.0"
 serde = { version = "1.0.0", features = ["derive"] }
 serde_json = "1.0.0"
