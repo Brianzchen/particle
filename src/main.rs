@@ -15,6 +15,14 @@ struct Args {
 
    /// When running the `workspace` command, the package you'd like to target
    arg_2: Option<String>,
+
+   /// If
+   /// workspace: the workspace you'd like to run commands on
+   arg_3: Option<String>,
+
+   /// If
+   /// workspace: the command against the workspace
+   arg_4: Option<String>,
 }
 
 fn main() {
@@ -46,6 +54,8 @@ fn main() {
                             println!("we found your workspace");
                         }
                     }
+                    // TODO if workspace not found it should error
+                    // Probably move the look up workspace into a separate func
                 },
                 None => {
                     println!("You've called `workspace` without the --package option");
