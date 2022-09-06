@@ -23,6 +23,7 @@ fn main() {
 
     let args = Args::parse();
     let command = &args.command[..];
+    let arg_2 = &args.arg_2;
 
     // parse workspaces here
     // to create a collection of workspaces and their package details
@@ -31,6 +32,13 @@ fn main() {
     match command {
         "check" => {
             commands::check(&config, &root_path);
+        },
+        "run" => {
+            if let Some(script) = arg_2 {
+                commands::run(&config, &root_path, script);
+            } else {
+                println!("To use `run` you must also pass a script")
+            }
         },
         "workspace" => {
             println!("pull the package name");
