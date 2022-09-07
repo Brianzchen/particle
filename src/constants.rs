@@ -4,15 +4,16 @@ use std::collections::HashMap;
 pub const CONFIG_FILE_NAME: &str = "particle.config.json";
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(untagged)]
 pub enum SyncDependencies {
     All(bool),
-    Some(Vec<String>)
+    Subset(Vec<String>)
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ParticleConfigOptions {
-    check_installs: Option<bool>,
-    sync_dependencies: Option<SyncDependencies>
+    pub check_installs: Option<bool>,
+    pub sync_dependencies: Option<SyncDependencies>
 }
 
 #[derive(Serialize, Deserialize, Debug)]
