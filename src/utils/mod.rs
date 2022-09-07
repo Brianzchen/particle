@@ -1,5 +1,4 @@
 use glob::glob;
-use serde::{Serialize, Deserialize};
 use std::env;
 use std::path::{Path, PathBuf};
 use std::fs;
@@ -45,16 +44,7 @@ pub fn get_config() -> Result<(constants::ParticleConfig, String), ()> {
   }
 }
 
-#[derive(Debug, Deserialize, Serialize)]
-pub struct Workspace {
-  /// The path to the package
-  pub path: String,
-
-  /// The package name
-  pub name: String,
-}
-
-pub fn get_workspaces_data(config: &constants::ParticleConfig, root_path: &String) -> Vec<Workspace> {
+pub fn get_workspaces_data(config: &constants::ParticleConfig, root_path: &String) -> Vec<constants::Workspace> {
   let workspaces = &config.workspaces;
 
   let mut workspace_paths: Vec<String> = vec![];
@@ -88,7 +78,7 @@ pub fn get_workspaces_data(config: &constants::ParticleConfig, root_path: &Strin
     let pkg_json: constants::PkgJson = from_str(&pkg_json)
       .expect(format!("JSON not well formed when parsing {} package.json", path).as_str());
 
-    Workspace {
+    constants::Workspace {
       name: pkg_json.name,
       path: String::new() + path,
     }

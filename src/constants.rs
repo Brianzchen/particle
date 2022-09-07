@@ -14,6 +14,15 @@ pub struct ParticleDependencyLock {
 
 }
 
+#[derive(Debug, Deserialize, Serialize)]
+pub struct Workspace {
+  /// The path to the package
+  pub path: String,
+
+  /// The package name
+  pub name: String,
+}
+
 #[derive(Deserialize, Debug)]
 pub struct PkgJson {
   pub name: String,

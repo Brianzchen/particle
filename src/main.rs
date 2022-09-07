@@ -4,7 +4,7 @@ mod utils;
 use colored::Colorize;
 use clap::Parser;
 
-use crate::utils::{get_config,get_workspaces_data};
+use crate::utils::{get_config};
 
 /// An unopinionated monorepo package manager for JS based applications.
 #[derive(Parser, Debug)]
@@ -32,8 +32,8 @@ fn main() {
     let args = Args::parse();
     let command = &args.command[..];
     let arg_2 = &args.arg_2;
-
-    let workspaces = get_workspaces_data(&config, &root_path);
+    let arg_3 = &args.arg_3;
+    let arg_4 = &args.arg_4;
 
     match command {
         "check" => {
@@ -47,21 +47,13 @@ fn main() {
             }
         },
         "workspace" => {
-            match args.arg_2 {
-                Some(user_workspace) => {
-                    for workspace in workspaces {
-                        if workspace.name == user_workspace {
-                            println!("we found your workspace");
-                        }
-                    }
-                    // TODO if workspace not found it should error
-                    // Probably move the look up workspace into a separate func
-                },
-                None => {
-                    println!("You've called `workspace` without the --package option");
-                    println!("Try again");
-                },
-            }
+            commands::workspace(
+                &config,
+                &root_path,
+                &arg_2,
+                &arg_3,
+                &arg_4,
+            );
         }
         _ => {
             println!("{}, try `{}` for more information",
