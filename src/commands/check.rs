@@ -52,33 +52,29 @@ pub fn main(config: &ParticleConfig, root_path: &String) {
         dep_versions.dedup();
     }
 
-    if let Some(options) = &config.options {
-        if let Some(sync_deps) = &options.sync_dependencies {
-            match sync_deps {
-                SyncDependencies::All(syn_deps) => {
-                    if *syn_deps {
-                        let all_deps_single_version = &dependencies
-                            .iter()
-                            .find(|deps| {
-                                let (_key, version_list) = deps;
-                                version_list.len() > 1
-                            });
-                        match all_deps_single_version {
-                            Some(dep) => {
-                                let (key, _) = dep;
-                                println!("{} is enabled, all dependencies across the project must use the same version.",
-                                    highlight(&String::from("sync_dependencies")));
-                                panic!("Found {} with mismatched dependency versions", highlight(key));
-                            },
-                            None => {},
-                        }
-                    }
-                },
-                SyncDependencies::Subset(_list) => {
-
-                },
+    match &config.options.sync_dependencies {
+        SyncDependencies::All(syn_deps) => {
+            if *syn_deps {
+                let all_deps_single_version = &dependencies
+                    .iter()
+                    .find(|deps| {
+                        let (_key, version_list) = deps;
+                        version_list.len() > 1
+                    });
+                match all_deps_single_version {
+                    Some(dep) => {
+                        let (key, _) = dep;
+                        println!("{} is enabled, all dependencies across the project must use the same version.",
+                            highlight(&String::from("sync_dependencies")));
+                        panic!("Found {} with mismatched dependency versions", highlight(key));
+                    },
+                    None => {},
+                }
             }
-        }
+        },
+        SyncDependencies::Subset(_list) => {
+
+        },
     }
 
     println!("{:?}", dependencies);

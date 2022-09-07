@@ -4,7 +4,6 @@
     "test": "echo hello"
   },
   "dependencies": {
-    "react": "17.0.0"
   },
   "devDependencies": {
     "webpack": "^5.0.0"

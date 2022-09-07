@@ -10,17 +10,32 @@ pub enum SyncDependencies {
     Subset(Vec<String>)
 }
 
+fn sync_dependencies_default() -> SyncDependencies { SyncDependencies::All(true) }
+fn check_installs_default() -> bool { false }
+fn options_default() -> ParticleConfigOptions {
+    ParticleConfigOptions {
+        check_installs: check_installs_default(),
+        sync_dependencies: sync_dependencies_default(),
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ParticleConfigOptions {
-    pub check_installs: Option<bool>,
-    pub sync_dependencies: Option<SyncDependencies>
+    #[serde(default = "check_installs_default")]
+    pub check_installs: bool,
+
+    #[serde(default = "sync_dependencies_default")]
+    pub sync_dependencies: SyncDependencies
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ParticleConfig {
     pub workspaces: Vec<String>,
+
     pub scripts: Option<HashMap<String, String>>,
-    pub options: Option<ParticleConfigOptions>,
+
+    #[serde(default = "options_default")]
+    pub options: ParticleConfigOptions,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
