@@ -10,6 +10,9 @@ An unopinionated monorepo package manager for JS based applications.
 
 ```sh
 brew tap brianzchen/particle
+brew install particle
+# To update to latest version
+brew upgrade particle
 ```
 
 ### Setup project
