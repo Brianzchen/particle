@@ -18,18 +18,18 @@ pub type Scripts = Option<HashMap<String, String>>;
 
 #[derive(Deserialize, Debug)]
 pub struct PkgJson {
-  pub name: String,
-  pub scripts: Scripts,
+    pub name: String,
+    pub scripts: Scripts,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Workspace {
-  /// The path to the package
-  pub path: String,
+    /// The path to the package
+    pub path: String,
 
-  /// The package name
-  pub name: String,
+    /// The package name
+    pub name: String,
 
-  /// scripts key on package.json
-  pub scripts: Scripts,
+    /// scripts key on package.json
+    pub scripts: Scripts,
 }

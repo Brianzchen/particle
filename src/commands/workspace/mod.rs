@@ -2,26 +2,26 @@ use crate::constants::{ParticleConfig, Workspace};
 use crate::utils::{get_workspaces_data, run_script_in_optional_scripts, highlight};
 
 fn find_workspace(workspaces: Vec<Workspace>, lookup: &String) -> Result<Workspace, String> {
-  let found_workspace = workspaces.into_iter().find(|w| {
-    w.name == lookup.to_owned()
-  });
+    let found_workspace = workspaces.into_iter().find(|w| {
+        w.name == lookup.to_owned()
+    });
 
-  match found_workspace {
-    Some(found_workspace) => {
-      Ok(found_workspace)
-    },
-    None => {
-      Err(lookup.to_owned())
-    },
-  }
+    match found_workspace {
+        Some(found_workspace) => {
+        Ok(found_workspace)
+        },
+        None => {
+        Err(lookup.to_owned())
+        },
+    }
 }
 
 pub fn main(
-  config: &ParticleConfig,
-  root_path: &String,
-  arg_2: &Option<String>,
-  arg_3: &Option<String>,
-  arg_4: &Option<String>,
+    config: &ParticleConfig,
+    root_path: &String,
+    arg_2: &Option<String>,
+    arg_3: &Option<String>,
+    arg_4: &Option<String>,
 ) {
   let workspaces = get_workspaces_data(&config, &root_path);
 
