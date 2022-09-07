@@ -43,7 +43,7 @@ fn main() {
             if let Some(script) = arg_2 {
                 commands::run(&config, &root_path, script);
             } else {
-                println!("To use `run` you must also pass a script")
+                println!("To use {} you must also pass a script", highlight(&String::from("run")));
             }
         },
         "workspace" => {
@@ -54,9 +54,12 @@ fn main() {
                 &arg_3,
                 &arg_4,
             );
-        }
+        },
+        "uncache" => {
+            commands::uncache();
+        },
         _ => {
-            println!("{}, try `{}` for more information",
+            println!("{}, try {} for more information",
                 format!("Invalid command given").red().bold(),
                 highlight(&String::from("particle help"))
             );
