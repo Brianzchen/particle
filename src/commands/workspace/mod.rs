@@ -3,7 +3,7 @@ use crate::utils::{get_workspaces_data, run_script_in_optional_scripts, highligh
 
 fn find_workspace(workspaces: Vec<Workspace>, lookup: &String) -> Result<Workspace, String> {
     let found_workspace = workspaces.into_iter().find(|w| {
-        w.name == lookup.to_owned()
+        w.package.name == lookup.to_owned()
     });
 
     match found_workspace {
@@ -39,7 +39,7 @@ pub fn main(
                 "run" => {
                   match arg_4 {
                     Some(script) => {
-                      run_script_in_optional_scripts(&workspace.scripts, script);
+                      run_script_in_optional_scripts(&workspace.package.scripts, script);
                     },
                     None => {
                       panic!("You cannot call workspace run without a script");

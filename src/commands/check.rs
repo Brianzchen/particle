@@ -1,27 +1,54 @@
-use std::fs;
+use std::{fs, collections::HashMap};
 use serde_json::from_str;
 
 use crate::constants;
+use crate::utils::{get_workspaces_data};
 
-pub fn main(_config: &constants::ParticleConfig, root_path: &String) {
-    println!("install deps I guess");
-
+pub fn main(config: &constants::ParticleConfig, root_path: &String) {
     // Pull lock file data
-    let mut lock_file = root_path.clone();
-    lock_file.push_str("/particle.lock.json");
-    let lock_file = fs::read_to_string(lock_file);
+    let lock_file = fs::read_to_string(format!("{}/particle.lock.json", root_path));
     let lock_file = match lock_file {
-            Ok(content) => {
-                let config: constants::ParticleDependencyLock = from_str(&content)
-                    .expect("lock file is malformed");
-                config
-            },
-            Err(_) => {
-                println!("No lock file found");
-                constants::ParticleDependencyLock {}
-            }
+        Ok(content) => {
+            let config: constants::ParticleDependencyLock = from_str(&content)
+                .expect("lock file is malformed");
+            config
+        },
+        Err(_) => {
+            println!("No lock file found");
+            constants::ParticleDependencyLock {}
+        }
     };
     println!("the lock contents are {:?}", lock_file);
+
+    let mut dependencies: HashMap<String, Vec<String>> = HashMap::new();
+    let workspaces = get_workspaces_data(&config, &root_path);
+
+    for workspace in workspaces {
+        let deps = workspace.package.dependencies;
+        let dev_deps = workspace.package.dev_dependencies;
+
+        if let Some(map) = deps {
+            for (key, value) in map.into_iter() {
+                let dep = dependencies.entry(key).or_insert(vec![]);
+                dep.push(value);
+            }
+        }
+
+        if let Some(map) = dev_deps {
+            for (key, value) in map.into_iter() {
+                let dep = dependencies.entry(key).or_insert(vec![]);
+                dep.push(value);
+            }
+        }
+    }
+
+    for (_, dep_versions) in &mut dependencies {
+        dep_versions.sort_unstable();
+        dep_versions.dedup();
+    }
+
+    println!("{:?}", dependencies);
+
     // look at the dependencies/peerDependencies of each
     // create a list of what needs to be installed
     // compare with lock file

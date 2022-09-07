@@ -1,12 +1,10 @@
 {
-  "name": "@particle/foo",
+  "name": "@particle/baz",
   "scripts": {
     "test": "echo hello"
   },
   "dependencies": {
-
-  },
-  "devDependencies": {
+    "react": "^16.8.0",
     "webpack": "^5.0.0"
   }
 }

@@ -85,9 +85,8 @@ pub fn get_workspaces_data(config: &constants::ParticleConfig, root_path: &Strin
         .expect(format!("JSON not well formed when parsing {} package.json", path).as_str());
 
         constants::Workspace {
-        name: pkg_json.name,
-        path: String::new() + path,
-        scripts: pkg_json.scripts,
+            path: String::new() + path,
+            package: pkg_json,
         }
     }).collect();
 
@@ -99,9 +98,8 @@ fn execute_string(script: &String) {
     let (_, output, error) = run_script!(script).unwrap();
     if error.len() == 0 {
         if output.len() > 0 {
-        print!("{}", output);
+            print!("{}", output);
         }
-        println!("Done ✨");
     } else {
         println!("{}", error);
     }

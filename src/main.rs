@@ -65,4 +65,6 @@ fn main() {
             );
         }
     }
+
+    println!("Done ✨");
 }

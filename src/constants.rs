@@ -15,11 +15,20 @@ pub struct ParticleDependencyLock {
 }
 
 pub type Scripts = Option<HashMap<String, String>>;
+pub type Dependencies = Option<HashMap<String, String>>;
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct PkgJson {
+    /// The package name
     pub name: String,
+
+    /// scripts key on package.json
     pub scripts: Scripts,
+
+    pub dependencies: Dependencies,
+
+    pub dev_dependencies: Dependencies,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -27,9 +36,6 @@ pub struct Workspace {
     /// The path to the package
     pub path: String,
 
-    /// The package name
-    pub name: String,
-
-    /// scripts key on package.json
-    pub scripts: Scripts,
+    /// Fields in workspace's package.json
+    pub package: PkgJson,
 }
