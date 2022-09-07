@@ -14,6 +14,14 @@ pub struct ParticleDependencyLock {
 
 }
 
+pub type Scripts = Option<HashMap<String, String>>;
+
+#[derive(Deserialize, Debug)]
+pub struct PkgJson {
+  pub name: String,
+  pub scripts: Scripts,
+}
+
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Workspace {
   /// The path to the package
@@ -21,9 +29,7 @@ pub struct Workspace {
 
   /// The package name
   pub name: String,
-}
 
-#[derive(Deserialize, Debug)]
-pub struct PkgJson {
-  pub name: String,
+  /// scripts key on package.json
+  pub scripts: Scripts,
 }

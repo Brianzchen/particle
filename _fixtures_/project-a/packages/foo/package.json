@@ -1,3 +1,6 @@
 {
-  "name": "@particle/foo"
+  "name": "@particle/foo",
+  "scripts": {
+    "test": "echo hello"
+  }
 }

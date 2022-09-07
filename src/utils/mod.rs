@@ -3,8 +3,14 @@ use std::env;
 use std::path::{Path, PathBuf};
 use std::fs;
 use serde_json::from_str;
+use run_script::{run_script};
+use colored::{Colorize};
 
 use crate::constants;
+
+pub fn highlight(value: &String) -> String {
+  format!("`{}`", format!("{}", value).bold().green())
+}
 
 fn find_parent_folder(starting_directory: &Path, file_name: &str) -> Option<PathBuf> {
   let mut path: PathBuf = starting_directory.into();
@@ -81,8 +87,34 @@ pub fn get_workspaces_data(config: &constants::ParticleConfig, root_path: &Strin
     constants::Workspace {
       name: pkg_json.name,
       path: String::new() + path,
+      scripts: pkg_json.scripts,
     }
   }).collect();
 
   workspaces
+}
+
+/// Execute a script in a string format
+fn execute_string(script: &String) {
+  let (_, output, error) = run_script!(script).unwrap();
+  if error.len() == 0 {
+    if output.len() > 0 {
+      print!("{}", output);
+    }
+    println!("Done ✨");
+  } else {
+    println!("{}", error);
+  }
+}
+
+pub fn run_script_in_optional_scripts(scripts: &constants::Scripts, script: &String) {
+  if let Some(s) = scripts {
+    let script_value = s.get(script);
+    if let Some(run) = script_value {
+      execute_string(run);
+    } else {
+      // says none here, fix it!
+      println!("Script {} does not exist!", highlight(script));
+    }
+  }
 }

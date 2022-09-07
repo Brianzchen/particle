@@ -1,6 +1,5 @@
-use run_script::{run_script};
-
 use crate::constants;
+use crate::utils::{run_script_in_optional_scripts};
 
 pub fn main(
   config: &constants::ParticleConfig,
@@ -9,20 +8,5 @@ pub fn main(
 ) {
   let scripts = &config.scripts;
 
-  if let Some(s) = scripts {
-    let script_value = s.get(script);
-    if let Some(run) = script_value {
-      let (_, output, error) = run_script!(run).unwrap();
-      if error.len() == 0 {
-        if output.len() > 0 {
-          print!("{}", output);
-        }
-        println!("Done ✨");
-      } else {
-        println!("{}", error);
-      }
-    } else {
-      println!("Script {:?} does not exist!", script_value);
-    }
-  }
+  run_script_in_optional_scripts(scripts, script);
 }

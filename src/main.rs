@@ -4,7 +4,7 @@ mod utils;
 use colored::Colorize;
 use clap::Parser;
 
-use crate::utils::{get_config};
+use crate::utils::{get_config, highlight};
 
 /// An unopinionated monorepo package manager for JS based applications.
 #[derive(Parser, Debug)]
@@ -58,7 +58,7 @@ fn main() {
         _ => {
             println!("{}, try `{}` for more information",
                 format!("Invalid command given").red().bold(),
-                format!("particle help").green()
+                highlight(&String::from("particle help"))
             );
         }
     }

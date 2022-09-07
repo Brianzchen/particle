@@ -1,7 +1,5 @@
-use colored::Colorize;
-
 use crate::constants::{ParticleConfig, Workspace};
-use crate::utils::{get_workspaces_data};
+use crate::utils::{get_workspaces_data, run_script_in_optional_scripts, highlight};
 
 fn find_workspace(workspaces: Vec<Workspace>, lookup: &String) -> Result<Workspace, String> {
   let found_workspace = workspaces.into_iter().find(|w| {
@@ -41,8 +39,7 @@ pub fn main(
                 "run" => {
                   match arg_4 {
                     Some(script) => {
-                      println!("you called script {}", script);
-                      println!("{}", workspace.name)
+                      run_script_in_optional_scripts(&workspace.scripts, script);
                     },
                     None => {
                       panic!("You cannot call workspace run without a script");
@@ -51,8 +48,8 @@ pub fn main(
                 },
                 _ => {
                   // TODO try to run relative path command
-                  println!("Command `{}` not possible on workspace", cmd.green().bold());
-                  println!("If you're trying to run a script try prefix the script with `{}`", String::from("run ").green().bold());
+                  println!("Command {} not possible on workspace", highlight(cmd));
+                  println!("If you're trying to run a script try prefix the script with `{}`", highlight(&String::from("run ")));
                 },
               }
             },
@@ -62,12 +59,12 @@ pub fn main(
           }
         },
         Err(workspace) => {
-          println!("Could not find workspace `{}`, are you sure it exists?", format!("{}", workspace).green().bold());
+          println!("Could not find workspace {}, are you sure it exists?", highlight(&workspace));
         },
       }
     },
     None => {
-        println!("You've called `workspace` without the --package option");
+        println!("You've called {} without the --package option", highlight(&String::from("workspace")));
         println!("Try again");
     },
   }
