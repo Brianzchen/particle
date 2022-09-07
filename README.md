@@ -50,19 +50,19 @@ Unlike other monorepo solutions, particle does not take advantage of a root `pac
      *
      * Default: false
      */
-    "checkInstalls": boolean,
+    "check_installs": boolean,
     /**
      * Whether all/some dependencies should be the same across all packages
      * in the project.
      *
-     * Default: false
+     * Default: true
      */
-    "syncDependencies": boolean | Array<string>,
+    "sync_dependencies": boolean | Array<string>,
   }
 }
 ```
 
-This allows a monorepo to not strictly run with JS based tooling and means you aren't expected to have a root `package.json` file.
+This allows a monorepo to not strictly run with JS based tooling and means you aren't expected to have a root `package.json` file; although particle will still scan a root `package.json` if one exists.
 
 Normally, many tools expect to be installed and executed from the root of the project. But they also generally provide ways to be executed from a separate directory. For tools like this, we instead recommend you create one or many workspaces to run tools against the root or some other directory.
 
@@ -79,9 +79,9 @@ registry -> local cache -> copied into queried workspace
 Doing this yields a couple of key benefits:
 
 - If you don't work across the whole monorepo you'll see far fewer dependencies and much faster installs
-- Dependencies and their versions are distributions locked in time. With a global cache, you can install a dependency either as an experiment or in another project and have it install also instantly next time
-- Because all dependencies are installed within a workspace you won't experience issues with node or tools not being aware of a monorepo and not being able to resolve a package because of hoisted dependencies
-- By using a global cache, we won't incur penalties related to installing duplicate dependencies across the monorepo as long if they use the same version
+- Dependencies and their versions are locked in time by their distribution location. With a global cache, you can install a dependency either as an experiment or in another project and have it install also instantly next time
+- Because all dependencies are installed within a workspace you won't experience issues with node or tools not being aware of a monorepo and not being able to resolve a package because of hoisted dependencies while still being able to keep all dependency versions in sync unless `syncDependencies` is disabled
+- By using a global cache, we won't incur penalties related to installing duplicate dependencies across the monorepo as long if they've been installed in the past
 
 ## Usage
 
