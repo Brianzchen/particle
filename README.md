@@ -83,7 +83,7 @@ Doing this yields a couple of key benefits:
 
 - If you don't work across the whole monorepo you'll see far fewer dependencies and much faster installs
 - Dependencies and their versions are locked in time by their distribution location. With a global cache, you can install a dependency either as an experiment or in another project and have it install also instantly next time
-- Because all dependencies are installed within a workspace you won't experience issues with node or tools not being aware of a monorepo and not being able to resolve a package because of hoisted dependencies while still being able to keep all dependency versions in sync unless `syncDependencies` is disabled
+- Because all dependencies are installed within a workspace you won't experience issues with node or tools not being aware of a monorepo and not being able to resolve a package because of hoisted dependencies while still being able to keep all dependency versions in sync unless `sync_dependencies` is disabled
 - By using a global cache, we won't incur penalties related to installing duplicate dependencies across the monorepo as long if they've been installed in the past
 
 ## Usage
@@ -98,26 +98,42 @@ This is the first command that's run after setting up or cloning a particle proj
 
 #### Force install
 
-If you believe your project has not reached a scale to take advantage of this lazy install you can the `checkInstalls` option to `true` in the config file.
+If you believe your project has not reached a scale to take advantage of this lazy install you can the `check_installs` option to `true` in the config file.
 
 Alternatively use the `--install` flag if you want to install all dependencies as a once off. Such as in CI.
 
 #### Rechecks
 
-When this runs on projects with an existing `particle.lock.json`, particle will go through workspaces and the lock file to determine whether they match. If not, unless `checkInstalls` as has been enabled, workspace's that have mismatching dependencies will have an `outdated` file added discretely in `node_modules` which particle will check for to trigger reinstalls when future commands are run.
+When this runs on projects with an existing `particle.lock.json`, particle will go through workspaces and the lock file to determine whether they match. If not, unless `check_installs` as has been enabled, workspace's that have mismatching dependencies will have an `outdated` file added discretely in `node_modules` which particle will check for to trigger reinstalls when future commands are run.
 
 Dependencies mappings can change quite regularly, especially when checking out different branches or pulling the latest commit in a git project. For cases like this you may consider adding `check` as part of your post checkout hook.
+
+#### Lock file updates
+
+It's important to note that particle will always take an optimistic approach to resolved dependencies when updating. This means that particle will always attempt to reduce the overall number of dependency versions across a given project.
+
+Putting this into practice, say a project allows multiple versions of `react`. One workspace updates from `^16.8.0` to `^17.0.0` while another stays at `^16.8.0`, both `16.x.x.` and `17.x.x` will exist in the lock file and different versions of react will be installed to either workspace when operated upon.
+
+Next, if the second package some time later decides to upgrade react also, but doesn't check the version of the first package and takes `^17.1.0`, if the current locked version of `17.x.x` does not satisfy `^17.1.0` then the lock file will be modified to have a single `17.x.x` version that is compatible with `^17.1.0` given that `17.1.0` satisfies `^17.0.0` with the rules of [semver](https://semver.org/).
+
+In summary, rechecks will always update the lock file to minimum number of versions that satisfy all ranges across workspaces and their dependencies. This means that any recheck targeting a single workspace or otherwise can have an unexpected change across other workspaces if dependencies break semver conventions.
+
+Building this enforcement, though dramatic, helps to keep the all workspaces across a project streamlined and ensure workspace owners make more intentional choices around their accepted dependency ranges (`~`, `^`).
 
 ### `run [script]`
 
 Run a script listed in the config file's `scripts` key, appending any additional parameters to the script.
 
-### `workspace [@scope/package] install`
+### `workspace [workspace] install`
 
-### `workspace [@scope/package] run [script]`
+### `workspace [workspace] run [script]`
 
-### `workspace [@scope/package] [path]`
+### `workspace [workspace] [path]`
 
 ### `uncache [package]`
 
 Removes a package from a user's local particle cache or all packages if no package was specified.
+
+### `upgrade [package] [workspace]`
+
+Upgrades a given third party dependency either across the whole project or for a single workspace if given. This updates dependency references in `package.json`(s) and runs `check` which updates the lock file.
