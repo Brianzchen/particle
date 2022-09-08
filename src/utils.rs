@@ -57,17 +57,16 @@ pub fn get_workspaces_data(config: &constants::ParticleConfig, root_path: &Strin
 
     for pattern in workspaces {
         let workspaces = glob(format!("{}{}/package.json", root_path, pattern).as_str())
-        .expect(format!("Failed to read glob pattern: {}", pattern).as_str());
-
+            .expect(format!("Failed to read glob pattern: {}", pattern).as_str());
 
         for workspace in workspaces.into_iter() {
         match workspace {
             Ok(path) => {
-            workspace_paths.push(path.into_os_string().into_string()
-                .expect("Could not convert workspace path into string"));
+                workspace_paths.push(path.into_os_string().into_string()
+                    .expect("Could not convert workspace path into string"));
             },
             Err(err) => {
-            panic!("{}", err);
+                panic!("{}", err);
             },
         }
         }
@@ -80,9 +79,9 @@ pub fn get_workspaces_data(config: &constants::ParticleConfig, root_path: &Strin
 
     let workspaces = workspace_paths.iter().map(|path| {
         let pkg_json = fs::read_to_string(path)
-        .expect(format!("workspace {} package.json cannot be read", path).as_str());
+            .expect(format!("workspace {} package.json cannot be read", path).as_str());
         let pkg_json: constants::PkgJson = from_str(&pkg_json)
-        .expect(format!("JSON not well formed when parsing {} package.json", path).as_str());
+          .expect(format!("JSON not well formed when parsing {} package.json", path).as_str());
 
         constants::Workspace {
             path: String::new() + path,

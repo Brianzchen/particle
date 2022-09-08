@@ -16,7 +16,7 @@ fn extract_dependencies(dependencies: &mut HashMap<String, Vec<String>>, deps: O
 pub fn main(config: &ParticleConfig, root_path: &String) {
     // Pull lock file data
     let lock_file = fs::read_to_string(format!("{}/particle.lock.json", root_path));
-    let lock_file = match lock_file {
+    let _lock_file = match lock_file {
         Ok(content) => {
             let config: ParticleDependencyLock = from_str(&content)
                 .expect("lock file is malformed");
@@ -27,7 +27,6 @@ pub fn main(config: &ParticleConfig, root_path: &String) {
             ParticleDependencyLock {}
         }
     };
-    println!("the lock contents are {:?}", lock_file);
 
     let mut dependencies: HashMap<String, Vec<String>> = HashMap::new();
     let workspaces = get_workspaces_data(&config, &root_path);
@@ -38,7 +37,6 @@ pub fn main(config: &ParticleConfig, root_path: &String) {
             extract_dependencies(&mut dependencies, root_pkg_json.dev_dependencies);
         }
     }
-    println!("{:?}", dependencies);
 
     for workspace in workspaces {
         let deps = workspace.package.dependencies;
@@ -67,14 +65,26 @@ pub fn main(config: &ParticleConfig, root_path: &String) {
                         let (key, _) = dep;
                         println!("{} is enabled, all dependencies across the project must use the same version.",
                             highlight(&String::from("sync_dependencies")));
-                        panic!("Found {} with mismatched dependency versions", highlight(key));
+                        panic!("Found dependency {} with mismatched dependency versions", highlight(key));
                     },
                     None => {},
                 }
             }
         },
-        SyncDependencies::Subset(_list) => {
-
+        SyncDependencies::Subset(list) => {
+            let unlisted_deps_more_than_one_version = &dependencies
+                .iter()
+                .find(|deps| {
+                    let (key, version_list) = deps;
+                    !list.contains(key) && version_list.len() > 1
+                });
+            if let Some((key, _value)) = unlisted_deps_more_than_one_version {
+                println!("An unlisted dependency {} is not synced across your repo.", highlight(key));
+                println!("If this is intentional you should add it to {} in your {}",
+                    highlight(&String::from("sync_dependencies")),
+                    highlight(&String::from("particle.config.json")));
+                panic!("Otherwise ensure it's sync across the project to continue");
+            }
         },
     }
 

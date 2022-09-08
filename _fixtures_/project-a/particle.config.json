@@ -4,5 +4,8 @@
   ],
   "scripts": {
     "hello": "echo hello"
+  },
+  "options": {
+    "sync_dependencies": ["react"]
   }
 }

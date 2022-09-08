@@ -66,5 +66,5 @@ fn main() {
         }
     }
 
-    println!("Done ✨");
+    println!("\nDone ✨");
 }
