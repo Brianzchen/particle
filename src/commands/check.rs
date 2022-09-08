@@ -4,7 +4,7 @@ use serde_json::from_str;
 use crate::constants::{ParticleConfig, ParticleDependencyLock, Dependencies, PkgJson, SyncDependencies};
 use crate::utils::{get_workspaces_data, highlight};
 
-fn extract_dependencies(dependencies: &mut HashMap<String, Vec<String>>, deps: Dependencies) {
+fn extract_dependencies(dependencies: &mut HashMap<String, Vec<String>>, deps: Option<Dependencies>) {
     if let Some(map) = deps {
         for (key, value) in map.into_iter() {
             let dep = dependencies.entry(key).or_insert(vec![]);
@@ -32,12 +32,13 @@ pub fn main(config: &ParticleConfig, root_path: &String) {
     let mut dependencies: HashMap<String, Vec<String>> = HashMap::new();
     let workspaces = get_workspaces_data(&config, &root_path);
 
-    if let Ok(root_pkg_json) = fs::read_to_string("{root_path}/package.json") {
+    if let Ok(root_pkg_json) = fs::read_to_string(format!("{}/package.json", root_path)) {
         if let Ok(root_pkg_json) = from_str::<PkgJson>(&root_pkg_json) {
             extract_dependencies(&mut dependencies, root_pkg_json.dependencies);
             extract_dependencies(&mut dependencies, root_pkg_json.dev_dependencies);
         }
     }
+    println!("{:?}", dependencies);
 
     for workspace in workspaces {
         let deps = workspace.package.dependencies;

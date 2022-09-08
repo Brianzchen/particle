@@ -3,15 +3,18 @@ use crate::utils::{get_workspaces_data, run_script_in_optional_scripts, highligh
 
 fn find_workspace(workspaces: Vec<Workspace>, lookup: &String) -> Result<Workspace, String> {
     let found_workspace = workspaces.into_iter().find(|w| {
-        w.package.name == lookup.to_owned()
+        if let Some(name) = &w.package.name {
+            return name == lookup;
+        }
+        false
     });
 
     match found_workspace {
         Some(found_workspace) => {
-        Ok(found_workspace)
-        },
+            Ok(found_workspace)
+            },
         None => {
-        Err(lookup.to_owned())
+            Err(lookup.to_owned())
         },
     }
 }

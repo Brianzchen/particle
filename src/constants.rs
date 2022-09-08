@@ -28,11 +28,14 @@ pub struct ParticleConfigOptions {
     pub sync_dependencies: SyncDependencies
 }
 
+pub type Scripts = HashMap<String, String>;
+pub type Dependencies = HashMap<String, String>;
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ParticleConfig {
     pub workspaces: Vec<String>,
 
-    pub scripts: Option<HashMap<String, String>>,
+    pub scripts: Option<Scripts>,
 
     #[serde(default = "options_default")]
     pub options: ParticleConfigOptions,
@@ -43,21 +46,18 @@ pub struct ParticleDependencyLock {
 
 }
 
-pub type Scripts = Option<HashMap<String, String>>;
-pub type Dependencies = Option<HashMap<String, String>>;
-
 #[derive(Deserialize, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PkgJson {
     /// The package name
-    pub name: String,
+    pub name: Option<String>,
 
     /// scripts key on package.json
-    pub scripts: Scripts,
+    pub scripts: Option<Scripts>,
 
-    pub dependencies: Dependencies,
+    pub dependencies: Option<Dependencies>,
 
-    pub dev_dependencies: Dependencies,
+    pub dev_dependencies: Option<Dependencies>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]

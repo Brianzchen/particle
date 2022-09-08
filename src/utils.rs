@@ -105,14 +105,13 @@ fn execute_string(script: &String) {
     }
 }
 
-pub fn run_script_in_optional_scripts(scripts: &constants::Scripts, script: &String) {
+pub fn run_script_in_optional_scripts(scripts: &Option<constants::Scripts>, script: &String) {
     if let Some(s) = scripts {
         let script_value = s.get(script);
         if let Some(run) = script_value {
-        execute_string(run);
+            execute_string(run);
         } else {
-        // says none here, fix it!
-        println!("Script {} does not exist!", highlight(script));
+            println!("Script {} does not exist!", highlight(script));
         }
     }
 }
