@@ -4,6 +4,7 @@
     "test": "echo hello"
   },
   "dependencies": {
+    "lodash": "4.0.0",
     "react": "17.0.0"
   },
   "devDependencies": {

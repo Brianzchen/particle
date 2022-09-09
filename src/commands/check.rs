@@ -1,6 +1,7 @@
 use std::time::Instant;
 use std::{fs, collections::HashMap};
-use reqwest::Client;
+use futures::future::join_all;
+use reqwest::{Client, Error};
 use serde_json::from_str;
 
 use crate::constants::{ParticleConfig, ParticleDependencyLock, Dependencies, PkgJson, SyncDependencies, PackageRegistry};
@@ -92,7 +93,7 @@ pub async fn main(config: &ParticleConfig, root_path: &String) {
 
     println!("{:?}", dependencies);
 
-    // read npmrc for different registry per scope
+    // TODO: read npmrc for different registry per scope
 
     // For each dependency, query it's registry info
     // and map out the following into the lock file
@@ -105,15 +106,20 @@ pub async fn main(config: &ParticleConfig, root_path: &String) {
     let now = Instant::now();
 
     let client = Client::new();
-    let resp: PackageRegistry = client.get("https://registry.npmjs.org/startown")
-        .send()
-        .await
-        .unwrap()
-        .json()
-        .await
-        .unwrap();
 
-    println!("{:#?}", resp);
+    let package_registry = dependencies.into_iter().map(|dep| async {
+        let (dep, _versions) = dep;
+        let url = format!("https://registry.npmjs.org/{}", dep);
+        let res: Result<PackageRegistry, Error> = client.get(url)
+            .send()
+            .await
+            .expect(format!("Unable to query registry for package {}", dep).as_str())
+            .json()
+            .await;
+        res
+    });
+
+    let _package_registry = join_all(package_registry).await;
 
     println!("{}", now.elapsed().as_millis());
 
