@@ -1,6 +1,8 @@
 mod commands;
 mod constants;
 mod utils;
+use std::time::Instant;
+
 use colored::Colorize;
 use clap::Parser;
 
@@ -25,7 +27,10 @@ struct Args {
    arg_4: Option<String>,
 }
 
-fn main() {
+#[tokio::main]
+async fn main() {
+    let start = Instant::now();
+
     let (config, root_path) = get_config()
         .expect("`particle.config.json` not found. You should add one to the root of your project to get started");
 
@@ -37,7 +42,7 @@ fn main() {
 
     match command {
         "check" => {
-            commands::check(&config, &root_path);
+            commands::check(&config, &root_path).await;
         },
         "run" => {
             if let Some(script) = arg_2 {
@@ -66,5 +71,5 @@ fn main() {
         }
     }
 
-    println!("\nDone ✨");
+    println!("\nDone ✨ in {}ms", start.elapsed().as_millis());
 }

@@ -1,7 +1,9 @@
+use std::time::Instant;
 use std::{fs, collections::HashMap};
+use reqwest::Client;
 use serde_json::from_str;
 
-use crate::constants::{ParticleConfig, ParticleDependencyLock, Dependencies, PkgJson, SyncDependencies};
+use crate::constants::{ParticleConfig, ParticleDependencyLock, Dependencies, PkgJson, SyncDependencies, PackageRegistry};
 use crate::utils::{get_workspaces_data, highlight};
 
 fn extract_dependencies(dependencies: &mut HashMap<String, Vec<String>>, deps: Option<Dependencies>) {
@@ -13,7 +15,7 @@ fn extract_dependencies(dependencies: &mut HashMap<String, Vec<String>>, deps: O
     }
 }
 
-pub fn main(config: &ParticleConfig, root_path: &String) {
+pub async fn main(config: &ParticleConfig, root_path: &String) {
     // Pull lock file data
     let lock_file = fs::read_to_string(format!("{}/particle.lock.json", root_path));
     let _lock_file = match lock_file {
@@ -89,6 +91,31 @@ pub fn main(config: &ParticleConfig, root_path: &String) {
     }
 
     println!("{:?}", dependencies);
+
+    // read npmrc for different registry per scope
+
+    // For each dependency, query it's registry info
+    // and map out the following into the lock file
+    // {
+    //   react: [
+    //
+    //  ]
+    // }
+
+    let now = Instant::now();
+
+    let client = Client::new();
+    let resp: PackageRegistry = client.get("https://registry.npmjs.org/startown")
+        .send()
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+
+    println!("{:#?}", resp);
+
+    println!("{}", now.elapsed().as_millis());
 
     // look at the dependencies/peerDependencies of each
     // create a list of what needs to be installed

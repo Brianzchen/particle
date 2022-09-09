@@ -68,3 +68,35 @@ pub struct Workspace {
     /// Fields in workspace's package.json
     pub package: PkgJson,
 }
+
+#[derive(Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+
+pub struct PackageRegistryVersionDist {
+    shasum: String,
+
+    /// Link to the actual package code
+    tarball: String,
+
+    integrity: String,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PackageRegistryVersion {
+    name: String,
+    version: String,
+    description: String,
+    main: String,
+    dependencies: Option<Dependencies>,
+    peer_dependencies: Option<Dependencies>,
+    dev_dependencies: Option<Dependencies>,
+    dist: PackageRegistryVersionDist,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct PackageRegistry {
+    pub name: String,
+
+    pub versions: HashMap<String, PackageRegistryVersion>,
+}
