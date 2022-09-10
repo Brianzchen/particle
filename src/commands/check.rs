@@ -1,10 +1,9 @@
 use std::time::Instant;
 use std::{fs, collections::HashMap};
-use futures::future::join_all;
 use reqwest::{Client, Error};
 use serde_json::from_str;
 
-use crate::constants::{ParticleConfig, ParticleDependencyLock, Dependencies, PkgJson, SyncDependencies, PackageRegistry};
+use crate::constants::{ParticleConfig, ParticleLock, Dependencies, PkgJson, SyncDependencies, PackageRegistry};
 use crate::utils::{get_workspaces_data, highlight};
 
 fn extract_dependencies(dependencies: &mut HashMap<String, Vec<String>>, deps: Option<Dependencies>) {
@@ -21,13 +20,15 @@ pub async fn main(config: &ParticleConfig, root_path: &String) {
     let lock_file = fs::read_to_string(format!("{}/particle.lock.json", root_path));
     let _lock_file = match lock_file {
         Ok(content) => {
-            let config: ParticleDependencyLock = from_str(&content)
+            let config: ParticleLock = from_str(&content)
                 .expect("lock file is malformed");
             config
         },
         Err(_) => {
             println!("No lock file found");
-            ParticleDependencyLock {}
+            ParticleLock {
+                dependencies: HashMap::new(),
+            }
         }
     };
 
@@ -95,20 +96,13 @@ pub async fn main(config: &ParticleConfig, root_path: &String) {
 
     // TODO: read npmrc for different registry per scope
 
-    // For each dependency, query it's registry info
-    // and map out the following into the lock file
-    // {
-    //   react: [
-    //
-    //  ]
-    // }
-
     let now = Instant::now();
-
     let client = Client::new();
 
-    let package_registry = dependencies.into_iter().map(|dep| async {
-        let (dep, _versions) = dep;
+    let mut packages_registry = vec![];
+
+    for (dep, _version) in &dependencies {
+        // TODO: Need to make the calls async
         let url = format!("https://registry.npmjs.org/{}", dep);
         let res: Result<PackageRegistry, Error> = client.get(url)
             .send()
@@ -116,10 +110,31 @@ pub async fn main(config: &ParticleConfig, root_path: &String) {
             .expect(format!("Unable to query registry for package {}", dep).as_str())
             .json()
             .await;
-        res
-    });
 
-    let _package_registry = join_all(package_registry).await;
+        packages_registry.push(res);
+    }
+
+    for package_registry in &packages_registry {
+        match package_registry {
+            Ok(registry_payload) => {
+                let versions = dependencies.get(&registry_payload.name);
+
+
+
+                if let Some(versions) = versions {
+                    for _version in versions {
+                        // Go through every version and
+                        // get the most highest valid version payload from the
+                        // package registry
+                        // and save it as a particle lock
+                    }
+                }
+            },
+            Err(e) => {
+                panic!("{e}");
+            },
+        }
+    }
 
     println!("{}", now.elapsed().as_millis());
 

@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::{collections::HashMap};
 
 pub const CONFIG_FILE_NAME: &str = "particle.config.json";
 
@@ -41,9 +41,30 @@ pub struct ParticleConfig {
     pub options: ParticleConfigOptions,
 }
 
+/// Sample struct
+/// react: {
+///     /// locked exact version
+///     [version: string]: {
+///         /// tarball#shasum
+///         resolved "https://registry.yarnpkg.com/@ampproject/remapping/-/remapping-2.1.2.tgz#4edca94973ded9630d20101cd8559cedb8d8bd34"
+///         integrity sha512-hoyByceqwKirw7w3Z7gnIIZC3Wx3J484Y3L/cMpXFbr7d9ZQj2mODrirNzcJa+SM3UlpWXYvKV4RlRpFXlWgXg==
+///         dependencies: {
+///             "@jridgewell/trace-mapping" "^0.3.0"
+///         }
+///         workspaces: [['root', '1.0.0']], ['@particle/foo', '^1.0.0], ...]
+///     }
+/// }
 #[derive(Serialize, Deserialize, Debug)]
-pub struct ParticleDependencyLock {
+pub struct ParticleLockDependencyVersion {
+    pub resolved: String,
+    integrity: String,
+    dependencies: Dependencies,
+    workspaces: Vec<(String, String)>,
+}
 
+#[derive(Serialize, Deserialize, Debug)]
+pub struct ParticleLock {
+    pub dependencies: HashMap<String, HashMap<String, ParticleLockDependencyVersion>>,
 }
 
 #[derive(Deserialize, Debug, Serialize)]
