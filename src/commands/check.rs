@@ -1,10 +1,14 @@
+mod get_highest_compatible_version;
+
 use std::time::Instant;
 use std::{fs, collections::HashMap};
 use reqwest::{Client, Error};
 use serde_json::from_str;
 
-use crate::constants::{ParticleConfig, ParticleLock, Dependencies, PkgJson, SyncDependencies, PackageRegistry};
+use crate::constants::{ParticleConfig, ParticleLock, Dependencies, PkgJson, SyncDependencies, PackageRegistry, ParticleLockDependencyVersion};
 use crate::utils::{get_workspaces_data, highlight};
+
+use get_highest_compatible_version::main as get_highest_compatible_version;
 
 fn extract_dependencies(dependencies: &mut HashMap<String, Vec<String>>, deps: Option<Dependencies>) {
     if let Some(map) = deps {
@@ -26,9 +30,7 @@ pub async fn main(config: &ParticleConfig, root_path: &String) {
         },
         Err(_) => {
             println!("No lock file found");
-            ParticleLock {
-                dependencies: HashMap::new(),
-            }
+            ParticleLock::new()
         }
     };
 
@@ -114,15 +116,32 @@ pub async fn main(config: &ParticleConfig, root_path: &String) {
         packages_registry.push(res);
     }
 
+    let mut new_lock = ParticleLock::new();
+
     for package_registry in &packages_registry {
         match package_registry {
             Ok(registry_payload) => {
+                let dependency_version_map = new_lock.dependencies
+                    .entry(registry_payload.name.clone())
+                    .or_insert(HashMap::new());
+
                 let versions = dependencies.get(&registry_payload.name);
-
-
+                let registry_available_versions = &registry_payload.versions;
 
                 if let Some(versions) = versions {
-                    for _version in versions {
+                    for version in versions {
+                        let available_versions: Vec<&String> = registry_available_versions.keys().collect();
+                        let lock_version = get_highest_compatible_version(available_versions, version);
+
+                        let version_data = registry_available_versions.get(&lock_version)
+                            .expect("Cannot get package registry data for version queried by version");
+
+                        let dependency_version_data = dependency_version_map.entry(lock_version).or_insert(ParticleLockDependencyVersion::new(
+                            version_data,
+                        ));
+
+                        dependency_version_data.add_workspace(&String::from("@foo/bar"), &version);
+
                         // Go through every version and
                         // get the most highest valid version payload from the
                         // package registry
@@ -135,6 +154,8 @@ pub async fn main(config: &ParticleConfig, root_path: &String) {
             },
         }
     }
+
+    println!("{:?}", new_lock);
 
     println!("{}", now.elapsed().as_millis());
 

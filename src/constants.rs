@@ -57,14 +57,39 @@ pub struct ParticleConfig {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ParticleLockDependencyVersion {
     pub resolved: String,
-    integrity: String,
-    dependencies: Dependencies,
-    workspaces: Vec<(String, String)>,
+    pub integrity: String,
+    pub dependencies: Option<Dependencies>,
+    pub workspaces: Vec<(String, String)>,
+}
+
+impl ParticleLockDependencyVersion {
+    pub fn new(
+        package_registry_data: &PackageRegistryVersion,
+    ) -> Self {
+        ParticleLockDependencyVersion {
+            resolved: format!("{}#{}", package_registry_data.dist.tarball, package_registry_data.dist.shasum),
+            integrity: package_registry_data.dist.integrity.clone(),
+            dependencies: package_registry_data.dependencies.clone(),
+            workspaces: vec![],
+        }
+    }
+
+    pub fn add_workspace(&mut self, workspace: &String, version: &String) {
+        self.workspaces.push((workspace.clone(), version.clone()));
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ParticleLock {
     pub dependencies: HashMap<String, HashMap<String, ParticleLockDependencyVersion>>,
+}
+
+impl ParticleLock {
+    pub fn new() -> Self {
+        ParticleLock {
+            dependencies: HashMap::new(),
+        }
+    }
 }
 
 #[derive(Deserialize, Debug, Serialize)]
