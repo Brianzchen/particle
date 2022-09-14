@@ -130,7 +130,8 @@ pub async fn main(config: &ParticleConfig, root_path: &String) {
 
                 if let Some(versions) = versions {
                     for version in versions {
-                        let available_versions: Vec<&String> = registry_available_versions.keys().collect();
+                        let mut available_versions: Vec<&String> = registry_available_versions.keys().collect();
+                        available_versions.sort();
                         let lock_version = get_highest_compatible_version(available_versions, version);
 
                         let version_data = registry_available_versions.get(&lock_version)

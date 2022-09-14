@@ -85,6 +85,7 @@ Doing this yields a couple of key benefits:
 - Dependencies and their versions are locked in time by their distribution location. With a global cache, you can install a dependency either as an experiment or in another project and have it install also instantly next time
 - Because all dependencies are installed within a workspace you won't experience issues with node or tools not being aware of a monorepo and not being able to resolve a package because of hoisted dependencies while still being able to keep all dependency versions in sync unless `sync_dependencies` is disabled
 - By using a global cache, we won't incur penalties related to installing duplicate dependencies across the monorepo as long if they've been installed in the past
+- With each workspace encapsulating their own dependencies, deployments don't need to build/install everything in the project, just the workspace itself plus all it's dependents
 
 ## Usage
 
@@ -129,6 +130,10 @@ Run a script listed in the config file's `scripts` key, appending any additional
 ### `workspace [workspace] run [script]`
 
 ### `workspace [workspace] [path]`
+
+### `workspace [script]`
+
+Loops through every workspace and runs the specified script if available.
 
 ### `uncache [package]`
 

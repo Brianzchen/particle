@@ -1,27 +1,19 @@
-pub fn main(available_versions: Vec<&String>, version: &String) -> String {
+pub fn main(_sorted_available_versions: Vec<&String>, version: &String) -> String {
     let prefix = &version[0..1];
+    let rest = &version[1..];
 
     match prefix {
         "^" => {
-            let major = &version[1..2];
-            if major == "0" {
-                // let minor = &version[2..3];
-                // let patch = &version[3..4];
-                // registry_available_versions.iter().for_each(|(_v, _d)| {
-
-                // });
-                String::from("")
-            } else {
-                String::from("")
-            }
+            let _split = rest.split(".");
         },
         "~" => {
-            String::from("")
         },
         _other => {
-            String::from("")
+            version.split(".");
         },
     }
+
+    String::from("")
 }
 
 #[cfg(test)]
