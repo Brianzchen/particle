@@ -1,12 +1,8 @@
-mod commands;
-mod constants;
-mod utils;
 use std::time::Instant;
-
-use colored::Colorize;
+use std::env;
 use clap::Parser;
 
-use crate::utils::{get_config, highlight};
+use particle::run;
 
 /// An unopinionated monorepo package manager for JS based applications.
 #[derive(Parser, Debug)]
@@ -31,45 +27,23 @@ struct Args {
 async fn main() {
     let start = Instant::now();
 
-    let (config, root_path) = get_config()
-        .expect("`particle.config.json` not found. You should add one to the root of your project to get started");
-
     let args = Args::parse();
     let command = &args.command[..];
     let arg_2 = &args.arg_2;
     let arg_3 = &args.arg_3;
     let arg_4 = &args.arg_4;
 
-    match command {
-        "check" => {
-            commands::check(&config, &root_path).await;
-        },
-        "run" => {
-            if let Some(script) = arg_2 {
-                commands::run(&config, &root_path, script);
-            } else {
-                println!("To use {} you must also pass a script", highlight(&String::from("run")));
-            }
-        },
-        "workspace" => {
-            commands::workspace(
-                &config,
-                &root_path,
-                &arg_2,
-                &arg_3,
-                &arg_4,
-            );
-        },
-        "uncache" => {
-            commands::uncache();
-        },
-        _ => {
-            println!("{}, try {} for more information",
-                format!("Invalid command given").red().bold(),
-                highlight(&String::from("particle help"))
-            );
-        }
-    }
+    let cwd = env::current_dir()
+        .expect("Cannot read current dir");
+    let cwd = cwd.to_str().unwrap();
 
-    println!("\nDone ✨ in {}ms", start.elapsed().as_millis());
+    run(
+        cwd,
+        command,
+        arg_2,
+        arg_3,
+        arg_4,
+    ).await;
+
+    println!("\n✨ Done in {}ms", start.elapsed().as_millis());
 }

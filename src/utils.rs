@@ -1,5 +1,4 @@
 use glob::glob;
-use std::env;
 use std::path::{Path, PathBuf};
 use std::fs;
 use serde_json::from_str;
@@ -12,7 +11,7 @@ pub fn highlight(value: &String) -> String {
     format!("`{}`", format!("{}", value).bold().green())
 }
 
-fn find_parent_folder(starting_directory: &Path, file_name: &str) -> Option<PathBuf> {
+fn find_parent_folder(starting_directory: &str, file_name: &str) -> Option<PathBuf> {
     let mut path: PathBuf = starting_directory.into();
     let file = Path::new(file_name);
 
@@ -29,11 +28,8 @@ fn find_parent_folder(starting_directory: &Path, file_name: &str) -> Option<Path
     }
 }
 
-pub fn get_config() -> Result<(constants::ParticleConfig, String), ()> {
-    let path = env::current_dir()
-        .expect("Cannot read current dir");
-
-    match find_parent_folder(&path, constants::CONFIG_FILE_NAME) {
+pub fn get_config(cwd: &str) -> Result<(constants::ParticleConfig, String), ()> {
+    match find_parent_folder(cwd, constants::CONFIG_FILE_NAME) {
         Some(filepath) => {
             let root_path = filepath.display().to_string();
             let config_file_index = root_path.find(constants::CONFIG_FILE_NAME).unwrap();
