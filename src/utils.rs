@@ -1,4 +1,6 @@
 use glob::glob;
+use std::error::Error;
+use std::io::{Error as IoError};
 use std::path::{Path, PathBuf};
 use std::fs;
 use serde_json::from_str;
@@ -28,21 +30,19 @@ fn find_parent_folder(starting_directory: &str, file_name: &str) -> Option<PathB
     }
 }
 
-pub fn get_config(cwd: &str) -> Result<(constants::ParticleConfig, String), ()> {
+pub fn get_config(cwd: &str) -> Result<(constants::ParticleConfig, String), Box<dyn Error>> {
     match find_parent_folder(cwd, constants::CONFIG_FILE_NAME) {
         Some(filepath) => {
             let root_path = filepath.display().to_string();
             let config_file_index = root_path.find(constants::CONFIG_FILE_NAME).unwrap();
             let root_path = &root_path[..config_file_index];
 
-            let content = fs::read_to_string(filepath)
-                .expect("Should have been able to read the file");
-            let config: constants::ParticleConfig = from_str(&content)
-                .expect("JSON was not well-formatted");
+            let content = fs::read_to_string(filepath)?;
+            let config: constants::ParticleConfig = from_str(&content)?;
 
             Ok((config, root_path.to_string()))
         },
-        None => Err(()),
+        None => Err("Directory wasn't found".into()),
     }
 }
 
