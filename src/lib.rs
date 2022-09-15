@@ -3,7 +3,6 @@ mod constants;
 mod utils;
 
 use std::process;
-use std::error::Error;
 use colored::Colorize;
 
 use utils::highlight;
@@ -14,7 +13,7 @@ pub async fn run(
     arg_2: &Option<String>,
     arg_3: &Option<String>,
     arg_4: &Option<String>,
-) -> Result<(), Box<dyn Error>> {
+) {
     let (config, root_path) = utils::get_config(cwd).unwrap_or_else(|_| {
         println!("`particle.config.json` not found. You should add one to the root of your project to get started");
         process::exit(1);
@@ -51,6 +50,4 @@ pub async fn run(
             );
         }
     }
-
-    Ok(())
 }

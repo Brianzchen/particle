@@ -1,6 +1,5 @@
 use glob::glob;
 use std::error::Error;
-use std::io::{Error as IoError};
 use std::path::{Path, PathBuf};
 use std::fs;
 use serde_json::from_str;
