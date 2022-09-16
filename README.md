@@ -87,6 +87,16 @@ Doing this yields a couple of key benefits:
 - By using a global cache, we won't incur penalties related to installing duplicate dependencies across the monorepo as long if they've been installed in the past
 - With each workspace encapsulating their own dependencies, deployments don't need to build/install everything in the project, just the workspace itself plus all it's dependents
 
+### <particle-root>
+
+Whenever `package.json` scripts are called with particle, they will be called under the context of the workspace that owns it. This means that scripts execute in the workspace's directory.
+
+This makes it easy to reason about while developing in a given workspace, if you have a script like, `"test": "./scripts/run-unit.sh"` you know it's relative to the workspace.
+
+But sometimes, particularly with project tooling, you may need to reference the project root to find some global config. To allow workspace locales to be better abstracted, particle allows scripts in `package.json` or `particle.config.json` to embed the `<particle-root>` keyword instead of trying to relative path back up to the project root which gets replaced during runtime with the root absolute directory path.
+
+You would use it like, `"build": "./build-script.sh --babel=<particle-root>/babel.config.json"`
+
 ## Usage
 
 Commands can be executed anywhere inside particle project using `particle ` followed by one of the following commands.
