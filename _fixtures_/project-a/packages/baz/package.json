@@ -1,7 +1,8 @@
 {
   "name": "@particle/baz",
   "scripts": {
-    "test": "echo hello"
+    "test": "echo hello",
+    "hello": "touch hola"
   },
   "dependencies": {
     "react": "^16.8.0",

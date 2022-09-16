@@ -3,18 +3,18 @@ mod test_utils;
 use particle::run;
 
 #[tokio::test]
-async fn calls_run_script() {
+async fn loops_through_every_workspace_to_call_script() {
     let cur_dir = test_utils::setup();
 
     run(
         &cur_dir,
-        "run",
+        "workspace",
         &Some(String::from("hello")),
         &None,
         &None,
     ).await;
 
-    // TODO expect that hello was called
+    // TODO expect all fake package hellos were called
 
     test_utils::teardown();
 }
