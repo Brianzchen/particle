@@ -55,15 +55,15 @@ pub fn get_workspaces_data(config: &constants::ParticleConfig, root_path: &Strin
             .expect(format!("Failed to read glob pattern: {}", pattern).as_str());
 
         for workspace in workspaces.into_iter() {
-        match workspace {
-            Ok(path) => {
-                workspace_paths.push(path.into_os_string().into_string()
-                    .expect("Could not convert workspace path into string"));
-            },
-            Err(err) => {
-                panic!("{}", err);
-            },
-        }
+            match workspace {
+                Ok(path) => {
+                    workspace_paths.push(path.into_os_string().into_string()
+                        .expect("Could not convert workspace path into string"));
+                },
+                Err(err) => {
+                    panic!("{}", err);
+                },
+            }
         }
     }
 
@@ -78,7 +78,14 @@ pub fn get_workspaces_data(config: &constants::ParticleConfig, root_path: &Strin
         let pkg_json: constants::PkgJson = from_str(&pkg_json)
           .expect(format!("JSON not well formed when parsing {} package.json", path).as_str());
 
+        let pkg_json_length = path.split("/package.json")
+            .collect::<Vec<&str>>()
+            .get(0)
+            .unwrap()
+            .to_owned();
+
         constants::Workspace {
+            workspace_path: String::from(pkg_json_length),
             path: String::new() + path,
             package: pkg_json,
         }
@@ -99,11 +106,16 @@ fn execute_string(script: &String) {
     }
 }
 
-pub fn run_script_in_optional_scripts(scripts: &Option<constants::Scripts>, script: &String) {
+pub fn run_script_in_optional_scripts(
+    path: &String,
+    scripts: &Option<constants::Scripts>,
+    script: &String,
+) {
     if let Some(s) = scripts {
         let script_value = s.get(script);
         if let Some(run) = script_value {
-            execute_string(run);
+            let script = String::from(format!("(cd {} && {})", path, run));
+            execute_string(&script);
         } else {
             println!("Script {} does not exist!", highlight(script));
         }

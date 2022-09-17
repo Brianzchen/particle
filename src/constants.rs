@@ -108,7 +108,10 @@ pub struct PkgJson {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Workspace {
-    /// The path to the package
+    /// Path to workspace directory
+    pub workspace_path: String,
+
+    /// Path to the package.json
     pub path: String,
 
     /// Fields in workspace's package.json

@@ -8,5 +8,5 @@ pub fn main(
 ) {
     let scripts = &config.scripts;
 
-    run_script_in_optional_scripts(scripts, script);
+    run_script_in_optional_scripts(_root_path, scripts, script);
 }

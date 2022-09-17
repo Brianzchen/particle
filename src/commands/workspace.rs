@@ -42,7 +42,11 @@ pub fn main(
                 "run" => {
                   match arg_4 {
                     Some(script) => {
-                      run_script_in_optional_scripts(&workspace.package.scripts, script);
+                      run_script_in_optional_scripts(
+                        &workspace.workspace_path,
+                        &workspace.package.scripts,
+                        script,
+                      );
                     },
                     None => {
                       panic!("You cannot call workspace run without a script");

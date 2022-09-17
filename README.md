@@ -135,11 +135,17 @@ Building this enforcement, though dramatic, helps to keep the all workspaces acr
 
 Run a script listed in the config file's `scripts` key, appending any additional parameters to the script.
 
-### `workspace [workspace] install`
+### `workspace [workspace]`
 
-### `workspace [workspace] run [script]`
+#### `install`
 
-### `workspace [workspace] [path]`
+`particle workspace @scope/workspace install`
+
+#### `run [script]`
+
+#### `[path]`
+
+#### `root` workspace
 
 ### `workspace [script]`
 
