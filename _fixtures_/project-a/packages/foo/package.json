@@ -1,7 +1,7 @@
 {
   "name": "@particle/foo",
   "scripts": {
-    "test": "echo hello",
+    "test": "echo <particle-root>",
     "hello": "touch ni hao"
   },
   "dependencies": {

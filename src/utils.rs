@@ -107,6 +107,7 @@ fn execute_string(script: &String) {
 }
 
 pub fn run_script_in_optional_scripts(
+    root_path: &String,
     path: &String,
     scripts: &Option<constants::Scripts>,
     script: &String,
@@ -114,7 +115,11 @@ pub fn run_script_in_optional_scripts(
     if let Some(s) = scripts {
         let script_value = s.get(script);
         if let Some(run) = script_value {
-            let script = String::from(format!("(cd {} && {})", path, run));
+            let script = String::from(format!(
+                "(cd {} && {})",
+                path,
+                run.replace("<particle-root>", root_path),
+            ));
             execute_string(&script);
         } else {
             println!("Script {} does not exist!", highlight(script));

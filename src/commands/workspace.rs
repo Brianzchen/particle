@@ -43,6 +43,7 @@ pub fn main(
                   match arg_4 {
                     Some(script) => {
                       run_script_in_optional_scripts(
+                        root_path,
                         &workspace.workspace_path,
                         &workspace.package.scripts,
                         script,
