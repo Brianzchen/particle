@@ -147,6 +147,10 @@ Run a script listed in the config file's `scripts` key, appending any additional
 
 #### `root` workspace
 
+As mentioned earlier, root `package.json`'s aren't necessary but if you find yourself adding particle incrementally to an existing project, you may you want to keep it around as you migrate to particle's recommended practices.
+
+To allows projects to take immediate advantage of particle, you can run particle commands against the root workspace with `root` keyword, `particle workspace root run test`.
+
 ### `workspace [script]`
 
 Loops through every workspace and runs the specified script if available.
