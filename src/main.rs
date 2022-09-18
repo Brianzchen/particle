@@ -1,8 +1,8 @@
-use std::time::Instant;
+use std::{time::Instant, process};
 use std::env;
 use clap::Parser;
 
-use particle::run;
+use particle::{run, utils};
 
 /// An unopinionated monorepo package manager for JS based applications.
 #[derive(Parser, Debug)]
@@ -37,13 +37,21 @@ async fn main() {
         .expect("Cannot read current dir");
     let cwd = cwd.to_str().unwrap();
 
-    run(
+    let res = run(
         cwd,
         command,
         arg_2,
         arg_3,
         arg_4,
     ).await;
+
+    match res {
+        Ok(_) => {},
+        Err(e) => {
+            utils::printer::error(&format!("{e}")[..]);
+            process::exit(1);
+        }
+    }
 
     println!("\n✨ Done in {}ms", start.elapsed().as_millis());
 }

@@ -6,7 +6,7 @@ use reqwest::{Client, Error};
 use serde_json::from_str;
 
 use crate::constants::{ParticleConfig, ParticleLock, Dependencies, PkgJson, SyncDependencies, PackageRegistry, ParticleLockDependencyVersion};
-use crate::utils::{get_workspaces_data, highlight};
+use crate::utils::{get_workspaces_data, printer};
 
 use get_highest_compatible_version::main as get_highest_compatible_version;
 
@@ -70,8 +70,8 @@ pub async fn main(config: &ParticleConfig, root_path: &String) {
                     Some(dep) => {
                         let (key, _) = dep;
                         println!("{} is enabled, all dependencies across the project must use the same version.",
-                            highlight(&String::from("sync_dependencies")));
-                        panic!("Found dependency {} with mismatched dependency versions", highlight(key));
+                            printer::highlight(&String::from("sync_dependencies")));
+                        panic!("Found dependency {} with mismatched dependency versions", printer::highlight(key));
                     },
                     None => {},
                 }
@@ -85,10 +85,10 @@ pub async fn main(config: &ParticleConfig, root_path: &String) {
                     !list.contains(key) && version_list.len() > 1
                 });
             if let Some((key, _value)) = unlisted_deps_more_than_one_version {
-                println!("An unlisted dependency {} is not synced across your repo.", highlight(key));
+                println!("An unlisted dependency {} is not synced across your repo.", printer::highlight(key));
                 println!("If this is intentional you should add it to {} in your {}",
-                    highlight(&String::from("sync_dependencies")),
-                    highlight(&String::from("particle.config.json")));
+                    printer::highlight(&String::from("sync_dependencies")),
+                    printer::highlight(&String::from("particle.config.json")));
                 panic!("Otherwise ensure it's sync across the project to continue");
             }
         },

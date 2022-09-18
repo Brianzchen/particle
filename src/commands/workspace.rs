@@ -1,5 +1,5 @@
 use crate::constants::{ParticleConfig, Workspace};
-use crate::utils::{get_workspaces_data, run_script_in_optional_scripts, highlight};
+use crate::utils::{get_workspaces_data, run_script_in_optional_scripts, printer};
 
 fn find_workspace(workspaces: Vec<Workspace>, lookup: &String) -> Result<Workspace, String> {
     let found_workspace = workspaces.into_iter().find(|w| {
@@ -56,8 +56,8 @@ pub fn main(
                 },
                 _ => {
                   // TODO try to run relative path command
-                  println!("Command {} not possible on workspace", highlight(cmd));
-                  println!("If you're trying to run a script try prefix the script with `{}`", highlight(&String::from("run ")));
+                  println!("Command {} not possible on workspace", printer::highlight(cmd));
+                  println!("If you're trying to run a script try prefix the script with `{}`", printer::highlight(&String::from("run ")));
                 },
               }
             },
@@ -67,12 +67,12 @@ pub fn main(
           }
         },
         Err(workspace) => {
-          println!("Could not find workspace {}, are you sure it exists?", highlight(&workspace));
+          println!("Could not find workspace {}, are you sure it exists?", printer::highlight(&workspace));
         },
       }
     },
     None => {
-        println!("You've called {} without the --package option", highlight(&String::from("workspace")));
+        println!("You've called {} without the --package option", printer::highlight(&String::from("workspace")));
         println!("Try again");
     },
   }

@@ -1,16 +1,13 @@
+pub mod printer;
+
 use glob::glob;
 use std::error::Error;
 use std::path::{Path, PathBuf};
 use std::fs;
 use serde_json::from_str;
 use run_script::{run_script};
-use colored::{Colorize};
 
 use crate::constants;
-
-pub fn highlight(value: &String) -> String {
-    format!("`{}`", format!("{}", value).bold().green())
-}
 
 fn find_parent_folder(starting_directory: &str, file_name: &str) -> Option<PathBuf> {
     let mut path: PathBuf = starting_directory.into();
@@ -122,7 +119,7 @@ pub fn run_script_in_optional_scripts(
             ));
             execute_string(&script);
         } else {
-            println!("Script {} does not exist!", highlight(script));
+            println!("Script {} does not exist!", printer::highlight(script));
         }
     }
 }

@@ -4,7 +4,7 @@ use particle::run;
 
 #[tokio::test]
 async fn calls_run_script() {
-    let cur_dir = test_utils::setup();
+    let cur_dir = test_utils::setup(None);
 
     run(
         &cur_dir,
@@ -12,7 +12,7 @@ async fn calls_run_script() {
         &Some(String::from("hello")),
         &None,
         &None,
-    ).await;
+    ).await.unwrap();
 
     // TODO expect that hello was called
 

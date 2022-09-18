@@ -18,10 +18,10 @@ fn get_fixture_project() -> String {
     cur_dir
 }
 
-fn create_fixture_project() {
+fn create_fixture_project(fixture_project: &str) {
     let fixture_dir = get_fixture_dir();
     let mut cur_dir = fixture_dir.clone();
-    cur_dir.push_str("/project-a");
+    cur_dir.push_str(fixture_project);
 
     let mut fixture_project_dir = fixture_dir.clone();
     fixture_project_dir.push_str("/project-integration-tests");
@@ -39,9 +39,11 @@ fn delete_integration_tests_dir() {
     });
 }
 
-pub fn setup() -> String {
+pub fn setup(fixture_project: Option<&str>) -> String {
+    let fixture_project = fixture_project.unwrap_or_else(|| "/project-a");
+
     delete_integration_tests_dir();
-    create_fixture_project();
+    create_fixture_project(fixture_project);
     get_fixture_project()
 }
 

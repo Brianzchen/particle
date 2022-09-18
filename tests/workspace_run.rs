@@ -4,7 +4,7 @@ use particle::run;
 
 #[tokio::test]
 async fn loops_through_every_workspace_to_call_script() {
-    let cur_dir = test_utils::setup();
+    let cur_dir = test_utils::setup(None);
 
     run(
         &cur_dir,
@@ -12,7 +12,7 @@ async fn loops_through_every_workspace_to_call_script() {
         &Some(String::from("hello")),
         &None,
         &None,
-    ).await;
+    ).await.unwrap();
 
     // TODO expect all fake package hellos were called
 
